@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Backend\NullBackend.cs" />
     <Compile Include="Backend\SerializedSnapshot.cs" />
+    <Compile Include="Frontend\TcpFrontend.cs" />
     <Compile Include="Middleware\Service\ActiveSnapshot.cs" />
     <Compile Include="Backend\ConsoleWriterMetricSnapshotBackend.cs" />
     <Compile Include="Hosting\IHost.cs" />
