@@ -2,7 +2,7 @@ using System.Threading;
 
 namespace StatsdNet.Frontend
 {
-    public interface IServer
+    public interface IFrontend
     {
         void Start(CancellationToken cancellationToken);
     }

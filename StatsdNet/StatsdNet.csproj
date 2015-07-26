@@ -60,7 +60,7 @@
     <Compile Include="ParsedPacket.cs" />
     <Compile Include="Frontend\IFrontend.cs" />
     <Compile Include="StatsdPacket.cs" />
-    <Compile Include="Frontend\UdpServer.cs" />
+    <Compile Include="Frontend\UdpFrontend.cs" />
     <Compile Include="Middleware\Middleware.cs" />
     <Compile Include="Backend\StaticSnapshot.cs" />
     <Compile Include="Middleware\Service\StatsdServiceMiddleware.cs" />

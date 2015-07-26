@@ -112,13 +112,13 @@ namespace StatsdNet.Hosting
                 middle = (Middleware.Middleware)factory.DynamicInvoke(args);
             }
 
-            var servers = new List<IServer>();
+            var servers = new List<IFrontend>();
 
             foreach (var builder in _servers)
             {
                 var factory = CreateObjectFactory(builder.Type, builder.Args);
                 var args = new[] { middle }.Concat(builder.Args).ToArray();
-                var server = (IServer) factory.DynamicInvoke(args);
+                var server = (IFrontend) factory.DynamicInvoke(args);
                 servers.Add(server);
             }
 

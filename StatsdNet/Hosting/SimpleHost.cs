@@ -8,9 +8,9 @@ namespace StatsdNet.Hosting
     public class SimpleHost : IHost
     {
         private readonly Middleware.Middleware _middleware;
-        private readonly IList<IServer> _servers;
+        private readonly IList<IFrontend> _servers;
 
-        public SimpleHost(Middleware.Middleware middleware, IList<IServer> servers)
+        public SimpleHost(Middleware.Middleware middleware, IList<IFrontend> servers)
         {
             _middleware = middleware;
             _servers = servers;

@@ -8,14 +8,14 @@ using StatsdNet.Middleware;
 
 namespace StatsdNet.Frontend
 {
-    public class UdpServer : IServer
+    public class UdpFrontend : IFrontend
     {
-        private readonly Middleware.Middleware _hostedMiddleware;
+        private readonly IMiddleware _hostedMiddleware;
         private readonly IPacketContextBuilder _contextBuilder;
         private readonly UdpClient _udpClient;
         private bool _isStarted = false;
 
-        public UdpServer(Middleware.Middleware hostedMiddleware, IPEndPoint serverEndpoint, IPacketContextBuilder contextBuilder)
+        public UdpFrontend(IMiddleware hostedMiddleware, IPEndPoint serverEndpoint, IPacketContextBuilder contextBuilder)
         {
             _hostedMiddleware = hostedMiddleware;
             _contextBuilder = contextBuilder;
