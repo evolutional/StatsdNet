@@ -48,6 +48,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\StatsdNet.Azure.EventHub\StatsdNet.Azure.EventHub.csproj">
+      <Project>{925E23DA-C3DA-4F67-ACEB-3FE51480D2E6}</Project>
+      <Name>StatsdNet.Azure.EventHub</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StatsdNet\StatsdNet.csproj">
       <Project>{EB769D2B-843E-47A3-B72A-B037D8E35C46}</Project>
       <Name>StatsdNet</Name>

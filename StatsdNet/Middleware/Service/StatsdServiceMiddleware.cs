@@ -7,7 +7,7 @@ using StatsdNet.Backend;
 
 namespace StatsdNet.Middleware.Service
 {
-    public class StatsdServiceMiddleware : Middleware
+    public class StatsdServiceMiddleware : MiddlewareBase
     {
         private readonly IList<IBackend> _backends;
         private ActiveSnapshot _activeSnapshot;
@@ -29,11 +29,19 @@ namespace StatsdNet.Middleware.Service
             _config = config ?? new StatsdServiceMiddlewareConfig();
         }
 
-        public override void Start(CancellationToken cancellationToken)
+        public override async Task Start(CancellationToken cancellationToken)
         {
-            Task.Run(() => FlushSnapshots(_config.FlushInterval, cancellationToken), cancellationToken);
+            var dummy = Task.Run(() => FlushSnapshots(_config.FlushInterval, cancellationToken), cancellationToken);
             _lastFlushTimestamp = _serviceStartTimestamp = DateTimeOffset.Now;
-            base.Start(cancellationToken);
+
+            await Task.WhenAll(_backends.Select(i => i.Start(cancellationToken)));
+
+            await base.Start(cancellationToken);
+        }
+
+        public override async Task Stop()
+        {
+            await Task.WhenAll(_backends.Select(i => i.Stop()));
         }
 
         private void IncCounter(string name)

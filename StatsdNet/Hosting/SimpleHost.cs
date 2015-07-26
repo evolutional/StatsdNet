@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using StatsdNet.Frontend;
 using StatsdNet.Middleware;
 
@@ -7,23 +8,33 @@ namespace StatsdNet.Hosting
 {
     public class SimpleHost : IHost
     {
-        private readonly Middleware.Middleware _middleware;
-        private readonly IList<IFrontend> _servers;
+        private readonly IMiddleware _middleware;
+        private readonly IList<IFrontend> _fontends;
 
-        public SimpleHost(Middleware.Middleware middleware, IList<IFrontend> servers)
+        public SimpleHost(IMiddleware middleware, IList<IFrontend> fontends)
         {
             _middleware = middleware;
-            _servers = servers;
+            _fontends = fontends;
         }
 
-        public void Start(CancellationToken cancellationToken)
+        public async Task Start(CancellationToken cancellationToken)
         {
-            _middleware.Start(cancellationToken);
+            await _middleware.Start(cancellationToken);
 
-            foreach (var server in _servers)
+            foreach (var frontend in _fontends)
             {
-                server.Start(cancellationToken);
+                await frontend.Start(cancellationToken);
             }
+        }
+
+        public async Task Stop()
+        {
+            foreach (var frontend in _fontends)
+            {
+                await frontend.Stop();
+            }
+
+            await _middleware.Stop();
         }
     }
 }

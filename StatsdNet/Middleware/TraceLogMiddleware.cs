@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace StatsdNet.Middleware
 {
-    public class TraceLogMiddleware : Middleware
+    public class TraceLogMiddleware : MiddlewareBase
     {
-        public TraceLogMiddleware(Middleware next)
+        public TraceLogMiddleware(MiddlewareBase next)
             : base(next)
         {
         }

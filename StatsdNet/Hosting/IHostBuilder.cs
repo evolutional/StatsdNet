@@ -11,7 +11,7 @@ namespace StatsdNet.Hosting
     public interface IHostBuilder
     {
         IHostBuilder UseConfig(StatsdServiceMiddlewareConfig config);
-        IHostBuilder UseServer(Type server, params object[] args);
+        IHostBuilder UseFrontend(Type server, params object[] args);
         IHostBuilder UsePreMiddleware(Type middlewareType, params object[] args);
         IHostBuilder UsePostMiddleware(Type middlewareType, params object[] args);
         IHostBuilder UseBackend(Type backendType, params object[] args);

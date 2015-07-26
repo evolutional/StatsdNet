@@ -3,18 +3,23 @@ using System.Threading.Tasks;
 
 namespace StatsdNet.Middleware
 {
-    public class TerminalMiddleware : Middleware
+    public class TerminalMiddleware : MiddlewareBase
     {
         public TerminalMiddleware() : base(null)
         {
         }
 
-        public override void Start(CancellationToken cancellationToken)
+        public override Task Start(CancellationToken cancellationToken)
         {
-            return;
+            return Task.FromResult(true);
         }
 
         public override Task Invoke(IPacketContext context)
+        {
+            return Task.FromResult(true);
+        }
+
+        public override Task Stop()
         {
             return Task.FromResult(true);
         }

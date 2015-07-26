@@ -17,7 +17,7 @@ namespace StatsdNet.Hosting
             public object[] Args { get; set; }
         }
 
-        private readonly IList<TypeArgsPair> _servers = new List<TypeArgsPair>();
+        private readonly IList<TypeArgsPair> _frontends = new List<TypeArgsPair>();
 
         private readonly IList<TypeArgsPair> _preMiddleware = new List<TypeArgsPair>();
         private readonly IList<TypeArgsPair> _postMiddleware = new List<TypeArgsPair>();
@@ -29,10 +29,10 @@ namespace StatsdNet.Hosting
             return this;
         }
 
-        public IHostBuilder UseServer(Type server, params object[] args)
+        public IHostBuilder UseFrontend(Type server, params object[] args)
         {
-            // TODO: check it implements IServer
-            _servers.Add(new TypeArgsPair {Type = server, Args = args});
+            // TODO: check it implements IFrontend
+            _frontends.Add(new TypeArgsPair {Type = server, Args = args});
             return this;
         }
 
@@ -94,13 +94,13 @@ namespace StatsdNet.Hosting
 
         public IHost Build()
         {
-            Middleware.Middleware middle = new TerminalMiddleware();
+            Middleware.MiddlewareBase middle = new TerminalMiddleware();
 
             foreach (var builder in _postMiddleware.Reverse())
             {
                 var factory = CreateObjectFactory(builder.Type, builder.Args);
                 var args = new[] {middle}.Concat(builder.Args).ToArray();
-                middle = (Middleware.Middleware)factory.DynamicInvoke(args);
+                middle = (Middleware.MiddlewareBase)factory.DynamicInvoke(args);
             }
             
             middle = _builder.Build(middle);
@@ -109,20 +109,20 @@ namespace StatsdNet.Hosting
             {
                 var factory = CreateObjectFactory(builder.Type, builder.Args);
                 var args = new[] { middle }.Concat(builder.Args).ToArray();
-                middle = (Middleware.Middleware)factory.DynamicInvoke(args);
+                middle = (Middleware.MiddlewareBase)factory.DynamicInvoke(args);
             }
 
-            var servers = new List<IFrontend>();
+            var frontends = new List<IFrontend>();
 
-            foreach (var builder in _servers)
+            foreach (var builder in _frontends)
             {
                 var factory = CreateObjectFactory(builder.Type, builder.Args);
                 var args = new[] { middle }.Concat(builder.Args).ToArray();
-                var server = (IFrontend) factory.DynamicInvoke(args);
-                servers.Add(server);
+                var frontend = (IFrontend) factory.DynamicInvoke(args);
+                frontends.Add(frontend);
             }
 
-            var host = new SimpleHost(middle, servers);
+            var host = new SimpleHost(middle, frontends);
 
             return host;
         }

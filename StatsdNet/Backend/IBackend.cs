@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace StatsdNet.Backend
@@ -8,17 +9,8 @@ namespace StatsdNet.Backend
     /// </summary>
     public interface IBackend
     {
+        Task Start(CancellationToken cancellationToken);
         Task ReceiveSnapshotAsync(DateTimeOffset timestamp, IMetricsSnapshot snapshot);
-    }
-
-    /// <summary>
-    /// Null-object backend
-    /// </summary>
-    public class NullBackend : IBackend
-    {
-        public Task ReceiveSnapshotAsync(DateTimeOffset timestamp, IMetricsSnapshot snapshot)
-        {
-            return Task.FromResult(true);
-        }
+        Task Stop();
     }
 }
