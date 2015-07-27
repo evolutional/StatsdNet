@@ -13,14 +13,12 @@ namespace StatsdNet.Frontend
     public class TcpFrontend : IFrontend
     {
         private readonly IMiddleware _hostedMiddleware;
-        private readonly IPacketContextBuilder _contextBuilder;
         private readonly TcpListener _listener;
         private bool _isStarted = false;
 
-        public TcpFrontend(IMiddleware hostedMiddleware, IPEndPoint serverEndpoint, IPacketContextBuilder contextBuilder)
+        public TcpFrontend(IMiddleware hostedMiddleware, IPEndPoint serverEndpoint)
         {
             _hostedMiddleware = hostedMiddleware;
-            _contextBuilder = contextBuilder;
             _listener = new TcpListener(serverEndpoint);
         }
 
@@ -76,7 +74,7 @@ namespace StatsdNet.Frontend
                             receiveIndex = 0;
 
                             var packetString = Encoding.UTF8.GetString(slice);
-                            var context = _contextBuilder.Build((IPEndPoint)client.Client.RemoteEndPoint, packetString);
+                            var context = new PacketData((IPEndPoint)client.Client.RemoteEndPoint, packetString);
 
                             await _hostedMiddleware.Invoke(context);
                             break;

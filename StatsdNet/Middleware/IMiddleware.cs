@@ -6,7 +6,7 @@ namespace StatsdNet.Middleware
     public interface IMiddleware
     {
         Task Start(CancellationToken cancellationToken);
-        Task Invoke(IPacketContext context);
+        Task Invoke(IPacketData context);
         Task Stop();
     }
 }

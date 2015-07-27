@@ -10,7 +10,7 @@ namespace StatsdNet.Middleware
             return Next.Start(cancellationToken);
         }
 
-        public abstract Task Invoke(IPacketContext context);
+        public abstract Task Invoke(IPacketData context);
 
         public virtual Task Stop()
         {

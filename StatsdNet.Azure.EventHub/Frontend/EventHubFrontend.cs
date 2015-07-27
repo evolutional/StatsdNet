@@ -11,16 +11,15 @@ namespace StatsdNet.Azure.EventHub.Frontend
         private readonly EventProcessorHost _eventProcessorHost;
         private readonly StatsdFrontendEventProcessorFactory _eventProcessorFactory;
 
-        public EventHubFrontend(IMiddleware hostedMiddleware, IPacketContextBuilder contextBuilder, EventHubFrontendConfiguration configuration)
+        public EventHubFrontend(IMiddleware hostedMiddleware, EventHubFrontendConfiguration configuration)
         {
-            _eventProcessorFactory = new StatsdFrontendEventProcessorFactory(hostedMiddleware, contextBuilder, configuration);
+            _eventProcessorFactory = new StatsdFrontendEventProcessorFactory(hostedMiddleware, configuration);
             _eventProcessorHost = new EventProcessorHost(configuration.EventProcessorName, configuration.EventHubName, EventHubConsumerGroup.DefaultGroupName, configuration.EventHubConnectionString, configuration.StorageConnectionString);
         }
 
         public async Task Start(CancellationToken cancellationToken)
         {
             await _eventProcessorHost.RegisterEventProcessorFactoryAsync(_eventProcessorFactory);
-            //await _eventProcessorHost.RegisterEventProcessorAsync<StatsdFrontendEventProcessor>();
         }
 
         public Task Stop()

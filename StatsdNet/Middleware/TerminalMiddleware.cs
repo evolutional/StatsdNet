@@ -14,7 +14,7 @@ namespace StatsdNet.Middleware
             return Task.FromResult(true);
         }
 
-        public override Task Invoke(IPacketContext context)
+        public override Task Invoke(IPacketData context)
         {
             return Task.FromResult(true);
         }

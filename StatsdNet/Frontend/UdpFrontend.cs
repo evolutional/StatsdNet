@@ -11,14 +11,12 @@ namespace StatsdNet.Frontend
     public class UdpFrontend : IFrontend
     {
         private readonly IMiddleware _hostedMiddleware;
-        private readonly IPacketContextBuilder _contextBuilder;
         private readonly UdpClient _udpClient;
         private bool _isStarted = false;
 
-        public UdpFrontend(IMiddleware hostedMiddleware, IPEndPoint serverEndpoint, IPacketContextBuilder contextBuilder)
+        public UdpFrontend(IMiddleware hostedMiddleware, IPEndPoint serverEndpoint)
         {
             _hostedMiddleware = hostedMiddleware;
-            _contextBuilder = contextBuilder;
             _udpClient = new UdpClient(serverEndpoint);
         }
 
@@ -46,7 +44,7 @@ namespace StatsdNet.Frontend
             {
                 var result = await _udpClient.ReceiveAsync();
                 var packetString = Encoding.UTF8.GetString(result.Buffer);
-                var context = _contextBuilder.Build(result.RemoteEndPoint, packetString);
+                var context = new PacketData(result.RemoteEndPoint, packetString);
                 try
                 {
                     await _hostedMiddleware.Invoke(context);

@@ -17,8 +17,8 @@ namespace StatsdNet.Hosting.ConsoleHost
         static async Task Run()
         {
             var host = new StatsdHostBuilder()
-                .UseFrontend(typeof(UdpFrontend), new IPEndPoint(IPAddress.Loopback, 6699), new PacketContextBuilder(() => Console.Out))
-                .UseFrontend(typeof(TcpFrontend), new IPEndPoint(IPAddress.Loopback, 8125), new PacketContextBuilder(() => Console.Out))
+                .UseFrontend(typeof(UdpFrontend), new IPEndPoint(IPAddress.Loopback, 6699))
+                .UseFrontend(typeof(TcpFrontend), new IPEndPoint(IPAddress.Loopback, 8125))
                 .UsePreMiddleware(typeof(TraceLogMiddleware))
                 .UseBackend(typeof(ConsoleWriterMetricSnapshotBackend))
                 .Build();

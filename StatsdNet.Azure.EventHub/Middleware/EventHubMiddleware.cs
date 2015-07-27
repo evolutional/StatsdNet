@@ -30,11 +30,11 @@ namespace StatsdNet.Azure.EventHub.Middleware
             return Task.FromResult(false);
         }
 
-        public override Task Invoke(IPacketContext context)
+        public override Task Invoke(IPacketData context)
         {
             try
             {
-                var json = JsonConvert.SerializeObject(context.Packet);
+                var json = JsonConvert.SerializeObject(context);
                 var eventData = new EventData(Encoding.UTF8.GetBytes(json));
                 return _eventHubClient.SendAsync(eventData);
             }

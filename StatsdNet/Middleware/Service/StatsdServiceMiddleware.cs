@@ -185,7 +185,7 @@ namespace StatsdNet.Middleware.Service
             return true;
         }
 
-        private void ProcessPacket(string packet, IPacketContext context)
+        private void ProcessPacket(string packet, IPacketData context)
         {
             ParsedPacket parsedPacket;
             var packetResult = PacketParser.TryParse(packet, out parsedPacket);
@@ -211,18 +211,18 @@ namespace StatsdNet.Middleware.Service
             IncCounter(string.Format(StatsdServiceStatConstants.MetricsCountFormat, _config.ServiceStatsPrefix));
         }
 
-        public override Task Invoke(IPacketContext context)
+        public override Task Invoke(IPacketData context)
         {
             IncCounter(string.Format(StatsdServiceStatConstants.PacketCountFormat, _config.ServiceStatsPrefix));
             
             IEnumerable<string> packets;
-            if (context.Packet.Data.Contains("\n"))
+            if (context.Data.Contains("\n"))
             {
-                packets = context.Packet.Data.Split('\n');
+                packets = context.Data.Split('\n');
             }
             else
             {
-                packets = new[] { context.Packet.Data };
+                packets = new[] { context.Data };
             }
 
             foreach (var packet in packets.Where(i => !string.IsNullOrWhiteSpace(i)).Select(i=>i.Replace("\r", "")))

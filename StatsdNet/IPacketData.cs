@@ -3,7 +3,7 @@ using System.Net;
 
 namespace StatsdNet
 {
-    public interface IStatsdPacket
+    public interface IPacketData
     {
         DateTimeOffset Timestamp { get; }
         string Data { get; }
