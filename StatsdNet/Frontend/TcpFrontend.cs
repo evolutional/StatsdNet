@@ -42,6 +42,12 @@ namespace StatsdNet.Frontend
             return Task.FromResult(false);
         }
 
+        private Uri MakeUri(IPEndPoint endpoint)
+        {
+            var builder = new UriBuilder("tcp", endpoint.Address.ToString(), endpoint.Port);
+            return builder.Uri;
+        }
+
         private async Task ReceiveClient(TcpClient client, CancellationToken cancellationToken)
         {
             var receiveBuffer = new byte[4096];
@@ -74,7 +80,7 @@ namespace StatsdNet.Frontend
                             receiveIndex = 0;
 
                             var packetString = Encoding.UTF8.GetString(slice);
-                            var context = new PacketData((IPEndPoint)client.Client.RemoteEndPoint, packetString);
+                            var context = new PacketData(MakeUri((IPEndPoint)client.Client.RemoteEndPoint), packetString);
 
                             await _hostedMiddleware.Invoke(context);
                             break;

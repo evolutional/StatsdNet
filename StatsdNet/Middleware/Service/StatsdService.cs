@@ -7,18 +7,18 @@ using StatsdNet.Backend;
 
 namespace StatsdNet.Middleware.Service
 {
-    public class StatsdServiceMiddleware : MiddlewareBase
+    public class StatsdService : IStatsdService
     {
         private readonly IList<IBackend> _backends;
         private ActiveSnapshot _activeSnapshot;
         private DateTimeOffset _lastFlushTimestamp;
         private DateTimeOffset _serviceStartTimestamp;
-        private readonly StatsdServiceMiddlewareConfig _config;
+        private readonly StatsdServiceConfig _config;
         private readonly Dictionary<string, Func<ParsedPacket,bool>> _handlers = new Dictionary<string, Func<ParsedPacket,bool>>();
 
         private readonly SemaphoreSlim _snapshotlock = new SemaphoreSlim(1);
 
-        public StatsdServiceMiddleware(IMiddleware next, IList<IBackend> backends, StatsdServiceMiddlewareConfig config = null) : base(next)
+        public StatsdService(IList<IBackend> backends, StatsdServiceConfig config = null)
         {
             _backends = backends;
             _handlers.Add(MetricTypeContants.Counter, HandleCounter);
@@ -26,22 +26,20 @@ namespace StatsdNet.Middleware.Service
             _handlers.Add(MetricTypeContants.Set, HandleSet);
             _handlers.Add(MetricTypeContants.Timer, HandleTimer);
             _activeSnapshot = new ActiveSnapshot();
-            _config = config ?? new StatsdServiceMiddlewareConfig();
+            _config = config ?? new StatsdServiceConfig();
         }
 
-        public override async Task Start(CancellationToken cancellationToken)
+        public Task Start(CancellationToken cancellationToken)
         {
             var dummy = Task.Run(() => FlushSnapshots(_config.FlushInterval, cancellationToken), cancellationToken);
             _lastFlushTimestamp = _serviceStartTimestamp = DateTimeOffset.Now;
 
-            await Task.WhenAll(_backends.Select(i => i.Start(cancellationToken)));
-
-            await base.Start(cancellationToken);
+            return Task.WhenAll(_backends.Select(i => i.Start(cancellationToken)));
         }
 
-        public override async Task Stop()
+        public Task Stop()
         {
-            await Task.WhenAll(_backends.Select(i => i.Stop()));
+            return Task.WhenAll(_backends.Select(i => i.Stop()));
         }
 
         private void IncCounter(string name)
@@ -211,7 +209,7 @@ namespace StatsdNet.Middleware.Service
             IncCounter(string.Format(StatsdServiceStatConstants.MetricsCountFormat, _config.ServiceStatsPrefix));
         }
 
-        public override Task Invoke(IPacketData context)
+        public Task Invoke(IPacketData context)
         {
             IncCounter(string.Format(StatsdServiceStatConstants.PacketCountFormat, _config.ServiceStatsPrefix));
             
@@ -231,7 +229,7 @@ namespace StatsdNet.Middleware.Service
             }
 
             // Done
-            return Next.Invoke(context);
+            return Task.FromResult(true);
         }
     }
 }

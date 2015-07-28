@@ -2,9 +2,9 @@
 
 namespace StatsdNet.Middleware.Service
 {
-    public class StatsdServiceMiddlewareConfig
+    public class StatsdServiceConfig
     {
-        public StatsdServiceMiddlewareConfig()
+        public StatsdServiceConfig()
         {
             FlushInterval = TimeSpan.FromSeconds(10);
             ServiceStatsPrefix = StatsdServiceStatConstants.DefaultPrefix;

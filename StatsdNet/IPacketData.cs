@@ -7,6 +7,6 @@ namespace StatsdNet
     {
         DateTimeOffset Timestamp { get; }
         string Data { get; }
-        IPEndPoint Sender { get; }
+        Uri Sender { get; }
     }
 }

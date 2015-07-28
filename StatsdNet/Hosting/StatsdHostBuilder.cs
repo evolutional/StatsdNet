@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using StatsdNet.Backend;
 using StatsdNet.Frontend;
 using StatsdNet.Middleware;
 using StatsdNet.Middleware.Service;
@@ -18,41 +17,32 @@ namespace StatsdNet.Hosting
         }
 
         private readonly IList<TypeArgsPair> _frontends = new List<TypeArgsPair>();
+        private readonly IList<TypeArgsPair> _middleware = new List<TypeArgsPair>();
+        private IStatsdServiceBuilder _serviceBuilder;
 
-        private readonly IList<TypeArgsPair> _preMiddleware = new List<TypeArgsPair>();
-        private readonly IList<TypeArgsPair> _postMiddleware = new List<TypeArgsPair>();
-        private readonly StatsdServiceMiddlewareBuilder _builder = new StatsdServiceMiddlewareBuilder();
-
-        public IHostBuilder UseConfig(StatsdServiceMiddlewareConfig config)
-        {
-            _builder.UseConfig(config);
-            return this;
-        }
-
-        public IHostBuilder UseFrontend(Type server, params object[] args)
+        public IHostBuilder UseFrontend(Type type, params object[] args)
         {
             // TODO: check it implements IFrontend
-            _frontends.Add(new TypeArgsPair {Type = server, Args = args});
+            _frontends.Add(new TypeArgsPair {Type = type, Args = args});
             return this;
         }
 
-        public IHostBuilder UsePreMiddleware(Type middleware, params object[] args)
+        public IHostBuilder UseMiddleware(Type type, params object[] args)
         {
             // TODO: check it implements the middle ware type
-            _preMiddleware.Add(new TypeArgsPair { Type = middleware, Args = args });
+            _middleware.Add(new TypeArgsPair { Type = type, Args = args });
             return this;
         }
 
-        public IHostBuilder UsePostMiddleware(Type middleware, params object[] args)
+        public IHostBuilder UseServiceBuilder(IStatsdServiceBuilder serviceBuilder)
         {
-            // TODO: check it implements the middle ware type
-            _postMiddleware.Add(new TypeArgsPair { Type = middleware, Args = args });
+            _serviceBuilder = serviceBuilder;
             return this;
         }
 
-        public IHostBuilder UseBackend(Type backendType, params object[] args)
+        public IHostBuilder UseBackend(Type type, params object[] args)
         {
-            _builder.UseBackend(backendType, args);
+            _serviceBuilder.UseBackend(type, args);
             return this;
         }
 
@@ -94,22 +84,18 @@ namespace StatsdNet.Hosting
 
         public IHost Build()
         {
-            Middleware.MiddlewareBase middle = new TerminalMiddleware();
+            IMiddleware middle = new TerminalMiddleware();;
 
-            foreach (var builder in _postMiddleware.Reverse())
+            if (_serviceBuilder != null)
             {
-                var factory = CreateObjectFactory(builder.Type, builder.Args);
-                var args = new[] {middle}.Concat(builder.Args).ToArray();
-                middle = (Middleware.MiddlewareBase)factory.DynamicInvoke(args);
+                middle = _serviceBuilder.Build();
             }
-            
-            middle = _builder.Build(middle);
 
-            foreach (var builder in _preMiddleware.Reverse())
+            foreach (var builder in _middleware.Reverse())
             {
                 var factory = CreateObjectFactory(builder.Type, builder.Args);
                 var args = new[] { middle }.Concat(builder.Args).ToArray();
-                middle = (Middleware.MiddlewareBase)factory.DynamicInvoke(args);
+                middle = (IMiddleware)factory.DynamicInvoke(args);
             }
 
             var frontends = new List<IFrontend>();
@@ -121,10 +107,7 @@ namespace StatsdNet.Hosting
                 var frontend = (IFrontend) factory.DynamicInvoke(args);
                 frontends.Add(frontend);
             }
-
-            var host = new SimpleHost(middle, frontends);
-
-            return host;
+            return new SimpleHost(middle, frontends);
         }
     }
 }

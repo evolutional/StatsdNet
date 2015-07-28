@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="Backend\EventHubBackend.cs" />
     <Compile Include="Backend\EventHubBackendConfiguration.cs" />
+    <Compile Include="EventHubExtensions.cs" />
     <Compile Include="Frontend\EventHubFrontend.cs" />
     <Compile Include="Frontend\EventHubFrontendConfiguration.cs" />
     <Compile Include="Frontend\StatsdFrontendEventProcessor.cs" />

@@ -43,21 +43,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\BackendBase.cs" />
+    <Compile Include="Backend\BackendExtensions.cs" />
     <Compile Include="Backend\NullBackend.cs" />
     <Compile Include="Backend\SerializedSnapshot.cs" />
     <Compile Include="Frontend\TcpFrontend.cs" />
+    <Compile Include="Frontend\TcpFrontendExtensions.cs" />
+    <Compile Include="Frontend\UdpFrontendExtensions.cs" />
     <Compile Include="Middleware\Service\ActiveSnapshot.cs" />
-    <Compile Include="Backend\ConsoleWriterMetricSnapshotBackend.cs" />
+    <Compile Include="Backend\ConsoleBackend.cs" />
     <Compile Include="Hosting\IHost.cs" />
     <Compile Include="Hosting\IHostBuilder.cs" />
     <Compile Include="Hosting\SimpleHost.cs" />
     <Compile Include="Hosting\StatsdHostBuilder.cs" />
     <Compile Include="Middleware\IMiddleware.cs" />
-    <Compile Include="Middleware\Service\StatsdServiceMiddlewareConfig.cs" />
+    <Compile Include="Middleware\Service\IStatsdService.cs" />
+    <Compile Include="Middleware\Service\StatsdServiceConfig.cs" />
     <Compile Include="Middleware\TraceLogMiddleware.cs" />
     <Compile Include="IPacketData.cs" />
-    <Compile Include="Middleware\Service\IStatsdServiceMiddlewareBuilder.cs" />
+    <Compile Include="Middleware\Service\IStatsdServiceBuilder.cs" />
     <Compile Include="Middleware\Service\StatsdServiceStatConstants.cs" />
+    <Compile Include="Middleware\TraceLogMiddlewareExtensions.cs" />
     <Compile Include="PacketParser.cs" />
     <Compile Include="PacketParseResult.cs" />
     <Compile Include="ParsedPacket.cs" />
@@ -66,12 +72,12 @@
     <Compile Include="Frontend\UdpFrontend.cs" />
     <Compile Include="Middleware\MiddlewareBase.cs" />
     <Compile Include="Backend\StaticSnapshot.cs" />
-    <Compile Include="Middleware\Service\StatsdServiceMiddleware.cs" />
+    <Compile Include="Middleware\Service\StatsdService.cs" />
     <Compile Include="IMetricsSnapshot.cs" />
     <Compile Include="Backend\IBackend.cs" />
     <Compile Include="MetricTypeContants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Middleware\Service\StatsdServiceMiddlewareBuilder.cs" />
+    <Compile Include="Middleware\Service\StatsdServiceBuilder.cs" />
     <Compile Include="Middleware\TerminalMiddleware.cs" />
   </ItemGroup>
   <ItemGroup>

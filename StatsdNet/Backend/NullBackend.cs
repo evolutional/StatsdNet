@@ -7,19 +7,9 @@ namespace StatsdNet.Backend
     /// <summary>
     /// Null-object backend
     /// </summary>
-    public class NullBackend : IBackend
+    public class NullBackend : BackendBase
     {
-        public Task Start(CancellationToken cancellationToken)
-        {
-            return Task.FromResult(true);
-        }
-
-        public Task ReceiveSnapshotAsync(DateTimeOffset timestamp, IMetricsSnapshot snapshot)
-        {
-            return Task.FromResult(true);
-        }
-
-        public Task Stop()
+        public override Task ReceiveSnapshotAsync(DateTimeOffset timestamp, IMetricsSnapshot snapshot)
         {
             return Task.FromResult(true);
         }

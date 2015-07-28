@@ -4,14 +4,9 @@ using System.Threading.Tasks;
 
 namespace StatsdNet.Backend
 {
-    public class ConsoleWriterMetricSnapshotBackend : IBackend
+    public class ConsoleBackend : BackendBase
     {
-        public Task Start(CancellationToken cancellationToken)
-        {
-            return Task.FromResult(true);
-        }
-
-        public Task ReceiveSnapshotAsync(DateTimeOffset timestamp, IMetricsSnapshot snapshot)
+        public override Task ReceiveSnapshotAsync(DateTimeOffset timestamp, IMetricsSnapshot snapshot)
         {
             Console.WriteLine("Start snapshot from: {0}", timestamp);
             
@@ -57,11 +52,6 @@ namespace StatsdNet.Backend
             Console.WriteLine("End snapshot from: {0}", timestamp);
             Console.WriteLine("\n");
 
-            return Task.FromResult(true);
-        }
-
-        public Task Stop()
-        {
             return Task.FromResult(true);
         }
     }

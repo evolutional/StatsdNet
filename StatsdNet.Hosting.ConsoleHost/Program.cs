@@ -9,6 +9,7 @@ using StatsdNet.Azure.EventHub.Frontend;
 using StatsdNet.Backend;
 using StatsdNet.Frontend;
 using StatsdNet.Middleware;
+using StatsdNet.Middleware.Service;
 
 namespace StatsdNet.Hosting.ConsoleHost
 {
@@ -16,11 +17,14 @@ namespace StatsdNet.Hosting.ConsoleHost
     {
         static async Task Run()
         {
+            var serviceBuilder = new StatsdServiceBuilder()
+                .UseConsoleBackend();
+
             var host = new StatsdHostBuilder()
-                .UseFrontend(typeof(UdpFrontend), new IPEndPoint(IPAddress.Loopback, 6699))
-                .UseFrontend(typeof(TcpFrontend), new IPEndPoint(IPAddress.Loopback, 8125))
-                .UsePreMiddleware(typeof(TraceLogMiddleware))
-                .UseBackend(typeof(ConsoleWriterMetricSnapshotBackend))
+                .UseUdpFrontend(new IPEndPoint(IPAddress.Loopback, 6699))
+                .UseTcpFrontend(new IPEndPoint(IPAddress.Loopback, 8125))
+                .UseTraceLogMiddleware()
+                .UseServiceBuilder(serviceBuilder)
                 .Build();
 
             var cts = new CancellationTokenSource();

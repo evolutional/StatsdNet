@@ -6,9 +6,9 @@ using StatsdNet.Backend;
 
 namespace StatsdNet.Middleware.Service
 {
-    public class StatsdServiceMiddlewareBuilder : IStatsdServiceMiddlewareBuilder
+    public class StatsdServiceBuilder : IStatsdServiceBuilder
     {
-        private StatsdServiceMiddlewareConfig _config;
+        private StatsdServiceConfig _config;
         private readonly List<Func<IBackend>> _backendFactories = new List<Func<IBackend>>();
 
         private static bool TestArgForParameter(Type parameterType, object arg)
@@ -46,7 +46,7 @@ namespace StatsdNet.Middleware.Service
             return null;
         }
 
-        public IStatsdServiceMiddlewareBuilder UseBackend(Type type, params object[] args)
+        public IStatsdServiceBuilder UseBackend(Type type, params object[] args)
         {
             var factory = CreateBackendFactory(type, args);
 
@@ -58,22 +58,18 @@ namespace StatsdNet.Middleware.Service
             return this;
         }
 
-        public IStatsdServiceMiddlewareBuilder UseConfig(StatsdServiceMiddlewareConfig config)
+        public IStatsdServiceBuilder UseConfig(StatsdServiceConfig config)
         {
             _config = config;
             return this;
         }
 
-        public StatsdServiceMiddleware Build(IMiddleware next)
+        public IStatsdService Build()
         {
             var backends = _backendFactories.Select(i => i()).ToList();
 
-            return new StatsdServiceMiddleware(next, backends, _config);
+            return new StatsdService(backends, _config);
         }
 
-        public StatsdServiceMiddleware Build()
-        {
-            return Build(new TerminalMiddleware());
-        }
     }
 }

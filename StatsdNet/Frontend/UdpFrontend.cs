@@ -38,13 +38,19 @@ namespace StatsdNet.Frontend
             return Task.FromResult(false);
         }
 
+        private Uri MakeUri(IPEndPoint endpoint)
+        {
+            var builder = new UriBuilder("udp", endpoint.Address.ToString(), endpoint.Port);
+            return builder.Uri;
+        }
+
         private async Task Listen(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested && _isStarted)
             {
                 var result = await _udpClient.ReceiveAsync();
                 var packetString = Encoding.UTF8.GetString(result.Buffer);
-                var context = new PacketData(result.RemoteEndPoint, packetString);
+                var context = new PacketData(MakeUri(result.RemoteEndPoint), packetString);
                 try
                 {
                     await _hostedMiddleware.Invoke(context);
