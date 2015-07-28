@@ -32,6 +32,19 @@ Statsd.Net implements the following metric types:
 - *sets (s)*: The value is added to the set. Sets contain unique values.
 - *timer (ms)*: The value is treated as a timestamp. Note that histograms are not currently supported by Statsd.Net.
 
+## Client ##
+
+This project provides a simple strongly-typed client which allows you to send metrics from .NET. The client has a pluggable *ITransport* interface, which will allow the creation of factories for any frontend that metrics need to be sent to. 
+
+An example of the client use is as follows:
+
+
+    var statsdClient = await TcpClientFactory.CreateClient(new IPEndPoint(IPAddress.Loopback, 8125));
+    statsdClient.AddCounter("testcounter", rng.Next(0, 1000));
+    statsdClient.SetGauge("itemssent", itemsSent++);
+
+
+
 ## Status ##
 
 Statsd.Net is in a very early alpha state. 
